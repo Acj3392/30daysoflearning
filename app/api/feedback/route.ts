@@ -55,8 +55,14 @@ Give 2-3 paragraphs of specific, constructive feedback. Note what works, what co
     return NextResponse.json({ text: feedback });
   } catch (err) {
     console.error("POST /api/feedback failed:", err);
+    // TEMP diagnostic: surface the real Anthropic error so we can see why it 500s.
+    const detail = err instanceof Error ? ` [${err.message}]` : "";
     return NextResponse.json(
-      { error: "The AI tutor is unavailable right now — your writing is saved, try again in a minute." },
+      {
+        error:
+          "The AI tutor is unavailable right now — your writing is saved, try again in a minute." +
+          detail,
+      },
       { status: 500 }
     );
   }
