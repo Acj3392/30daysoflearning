@@ -33,6 +33,18 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unknown lesson" }, { status: 400 });
   }
 
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) {
+    // TEMP diagnostic: show which ANTHROPIC_* vars the function can actually see
+    const visible = Object.keys(process.env).filter((k) => k.startsWith("ANTHROPIC"));
+    return NextResponse.json(
+      {
+        error: `ANTHROPIC_API_KEY is not set in this deployment. Anthropic-prefixed vars visible: [${visible.join(", ") || "none"}]`,
+      },
+      { status: 500 }
+    );
+  }
+
   // Same tutor prompt as the original app, built server-side from the curriculum
   const prompt = `You are a warm, exacting writing tutor. The student is working on a lesson called "${lesson.title}" in the track "${lesson.track}".
 
@@ -44,7 +56,7 @@ Student's free-write:
 Give 2-3 paragraphs of specific, constructive feedback. Note what works, what could be stronger, and one concrete revision suggestion. Be encouraging but honest.`;
 
   try {
-    const client = new Anthropic();
+    const client = new Anthropic({ apiKey });
     const msg = await client.messages.create({
       model: MODEL,
       max_tokens: 1024,
