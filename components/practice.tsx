@@ -169,29 +169,24 @@ function WritePractice({ day, lessonIdx, lesson, state, update }: PracticeProps)
         </>
       )}
 
-      {!done ? (
-        <>
-          <textarea
-            className="write-area"
-            placeholder="Write here..."
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-          />
-          <div className="action-row">
-            <button className="btn-primary" onClick={getFeedback} disabled={loading || !text.trim()}>
-              {loading ? "Getting feedback…" : "Get AI Feedback"}
-            </button>
-            <button className="btn-secondary" onClick={markDone}>
-              Mark Done
-            </button>
-          </div>
-        </>
-      ) : (
-        <>
-          {text && <div className="write-area write-area-done">{text}</div>}
-          <div className="complete-badge">✓ Complete</div>
-        </>
-      )}
+      <textarea
+        className="write-area"
+        placeholder="Write here..."
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+      />
+      <div className="action-row">
+        <button className="btn-primary" onClick={getFeedback} disabled={loading || !text.trim()}>
+          {loading ? "Getting feedback…" : "Get AI Feedback"}
+        </button>
+        {done ? (
+          <span className="complete-badge">✓ Complete</span>
+        ) : (
+          <button className="btn-secondary" onClick={markDone}>
+            Mark Done
+          </button>
+        )}
+      </div>
 
       {loading && (
         <div className="ai-feedback-box">
