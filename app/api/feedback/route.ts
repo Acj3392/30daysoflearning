@@ -35,12 +35,8 @@ export async function POST(request: Request) {
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
-    // TEMP diagnostic: show which ANTHROPIC_* vars the function can actually see
-    const visible = Object.keys(process.env).filter((k) => k.startsWith("ANTHROPIC"));
     return NextResponse.json(
-      {
-        error: `ANTHROPIC_API_KEY is not set in this deployment. Anthropic-prefixed vars visible: [${visible.join(", ") || "none"}]`,
-      },
+      { error: "The AI tutor isn't configured yet (missing ANTHROPIC_API_KEY)." },
       { status: 500 }
     );
   }
@@ -67,14 +63,8 @@ Give 2-3 paragraphs of specific, constructive feedback. Note what works, what co
     return NextResponse.json({ text: feedback });
   } catch (err) {
     console.error("POST /api/feedback failed:", err);
-    // TEMP diagnostic: surface the real Anthropic error so we can see why it 500s.
-    const detail = err instanceof Error ? ` [${err.message}]` : "";
     return NextResponse.json(
-      {
-        error:
-          "The AI tutor is unavailable right now — your writing is saved, try again in a minute." +
-          detail,
-      },
+      { error: "The AI tutor is unavailable right now — your writing is saved, try again in a minute." },
       { status: 500 }
     );
   }
