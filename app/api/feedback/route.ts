@@ -58,8 +58,11 @@ Give 2-3 paragraphs of specific, constructive feedback. Note what works, what co
       max_tokens: 1024,
       messages: [{ role: "user", content: prompt }],
     });
-    const block = msg.content[0];
-    const feedback = block?.type === "text" ? block.text : "";
+    const feedback = msg.content
+      .filter((b): b is Anthropic.TextBlock => b.type === "text")
+      .map((b) => b.text)
+      .join("\n")
+      .trim();
     return NextResponse.json({ text: feedback });
   } catch (err) {
     console.error("POST /api/feedback failed:", err);
