@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
-import { getSql } from "@/lib/db";
+import { getSql, ensureSchema } from "@/lib/db";
 import { AppState, blankState, isValidState, mergeState } from "@/lib/state";
 
 export async function GET() {
   try {
+    await ensureSchema();
     const sql = getSql();
     const rows = (await sql`SELECT state FROM app_state WHERE id = 'default'`) as {
       state: Partial<AppState>;
@@ -24,6 +25,7 @@ export async function PUT(request: Request) {
   }
 
   try {
+    await ensureSchema();
     const sql = getSql();
     await sql`
       INSERT INTO app_state (id, state, updated_at)

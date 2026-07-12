@@ -4,6 +4,7 @@ import { blankState } from "@/lib/state";
 const sqlMock = vi.fn();
 vi.mock("@/lib/db", () => ({
   getSql: () => sqlMock,
+  ensureSchema: () => Promise.resolve(),
 }));
 
 import { GET, PUT } from "@/app/api/state/route";
